@@ -11,7 +11,7 @@ public class Parola {
 		this.aliena = aliena;
 	}
 
-	public Collection<String> getIta() {
+	public List<String> getIta() {
 		return ita;
 	}
 

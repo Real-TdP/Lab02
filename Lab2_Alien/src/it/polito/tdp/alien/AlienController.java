@@ -44,40 +44,51 @@ public class AlienController {
     	String txt[]= tmp.split(" ");
     	if(txt.length==1){
     		List<String> x = new LinkedList<String>();
-    		 x = (List<String>) d.searchWord(txt[0]);
-    		    		 if(x==null){
-    			 txtLog.appendText("Nessuna parola trovata! \n");
-    			
-    			 txtTrans.clear();
-    			 return;
-    		 }
-    		 else if(x.size()==1){
-    			 txtLog.appendText("La parola in lingua italiana è:  "+x.get(0)+"\n");
-    		 }
-    			
-    		 else if(x.size()>1){
-    			String tx="Le parole in lingua italiana sono:  \n";
-    			for(String t:x)
-    				tx+="- "+t+"\n";
-    			txtLog.appendText(tx);
+    		List<Parola> y = new LinkedList<Parola>();
+    		if(txt[0].matches("([a-zA-Z]+||^)\\?([a-zA-z]+||$)")) {
+    			System.out.println(txt[0]);
+    			String txxt[]=txt[0].split("\\?");
+    			if(txxt.length==1)
+    				y=d.searchWord(txxt[0], "");
+    			else
+    				y=d.searchWord(txxt[0], txxt[1]);
     		}
+    		else {
+    			if(!d.checkWord(txt[0])) {
+        			txtLog.appendText("Errore nella sintassi, caratteri consentiti:  [a-z][A-Z]\nRiprova\n");
+        			return;
+        		}
+    			y.add( d.searchWord(txt[0]));
+    		}
+    		
+    		for(Parola p:y) {
+    			x= p.getIta();
+        		if(x==null)
+        			txtLog.appendText("Nessuna parola trovata! \n");
+        		else if(x.size()==1)
+        			txtLog.appendText("La parola in lingua italiana è:  "+x.get(0)+"\n");
+        		else if(x.size()>1){
+        			String tx="Le parole in lingua italiana per \""+p.getAliena()+"\" sono:  \n";
+        			for(String t:x)
+        				tx+="- "+t+"\n";
+        			txtLog.appendText(tx);
+        		}
+    		}
+    			
     		txtTrans.clear();
     	}
-    	else{
-    		if(d.searchWord(txt[0])!=null){
-    			if(d.addWord(txt[0], txt[1])){
-        			txtLog.appendText("Traduzione aggiornata correttamente\n");
-        		}
-    			
-    		}
-    		else if(d.addWord(txt[0], txt[1])){
-    			txtLog.appendText("Traduzione aggiunta correttamente\n");
-    		}
-        	
-        	txtTrans.clear();       	
-    	}
-    		
+    	else
+    		if(d.addWord(txt[0], txt[1]))
+    			txtLog.appendText("Traduzione aggiornata correttamente\n");
+    		else
+    			txtLog.appendText("Errore nella sintassi, caratteri consentiti:  [a-z][A-Z]\n");      	  
+    	txtTrans.clear();   
+    	
     }
+  
+    
+    
+    
 
     @FXML
     void initialize() {
